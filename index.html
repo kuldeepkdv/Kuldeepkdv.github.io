@@ -1,32 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KD — BIW Robotic Simulation Engineer</title>
+    <meta name="description"
+        content="Kuldeep — BIW Robotic Simulation Engineer with 8.5+ years driving automotive manufacturing innovation through robotic simulation, process planning, and digital twin technologies.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #16161f;
+            --bg-primary: #06060b;
+            --bg-secondary: #0c0c14;
+            --bg-card: rgba(18, 18, 30, 0.6);
+            --bg-card-solid: #12121e;
             --accent: #00e5a0;
-            --accent-dim: #00e5a020;
-            --accent-mid: #00e5a050;
-            --text-primary: #e8e8ec;
+            --accent-secondary: #00b8d4;
+            --accent-dim: #00e5a012;
+            --accent-mid: #00e5a040;
+            --accent-glow: #00e5a025;
+            --text-primary: #e8e8f0;
             --text-secondary: #8888a0;
             --text-muted: #55556a;
-            --border: #22223a;
-            --glow: 0 0 40px #00e5a015;
+            --border: #1a1a2e;
+            --border-hover: #2a2a44;
+            --glow: 0 0 60px #00e5a018;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --nav-bg: rgba(6, 6, 11, 0.7);
+            --nav-mobile-bg: rgba(6, 6, 11, 0.95);
+            --particle-opacity: 1;
+            --grid-opacity: 0.08;
+            --orb-opacity: 1;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        [data-theme="light"] {
+            --bg-primary: #f5f5f8;
+            --bg-secondary: #eeeef2;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-card-solid: #ffffff;
+            --accent: #00c78a;
+            --accent-secondary: #009eb8;
+            --accent-dim: #00c78a10;
+            --accent-mid: #00c78a30;
+            --accent-glow: #00c78a18;
+            --text-primary: #1a1a2e;
+            --text-secondary: #555570;
+            --text-muted: #8888a0;
+            --border: #dddde5;
+            --border-hover: #ccccda;
+            --glow: 0 4px 30px rgba(0, 199, 138, 0.1);
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --nav-bg: rgba(245, 245, 248, 0.8);
+            --nav-mobile-bg: rgba(245, 245, 248, 0.95);
+            --particle-opacity: 0.4;
+            --grid-opacity: 0.04;
+            --orb-opacity: 0.5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         html {
             scroll-behavior: smooth;
             scrollbar-width: thin;
-            scrollbar-color: var(--accent-dim) var(--bg-primary);
+            scrollbar-color: var(--accent-mid) var(--bg-primary);
         }
 
         body {
@@ -35,6 +80,43 @@
             color: var(--text-primary);
             line-height: 1.7;
             overflow-x: hidden;
+        }
+
+        /* ── SCROLL PROGRESS BAR ── */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary), #a855f7);
+            z-index: 9999;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 12px var(--accent-mid);
+        }
+
+        /* ── CURSOR GLOW ── */
+        .cursor-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: left 0.3s ease-out, top 0.3s ease-out;
+            will-change: left, top;
+        }
+
+        /* ── PARTICLE CANVAS ── */
+        #particle-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: var(--particle-opacity);
+            transition: opacity 0.5s ease;
         }
 
         /* ── GRID BACKGROUND ── */
@@ -46,7 +128,7 @@
                 linear-gradient(var(--border) 1px, transparent 1px),
                 linear-gradient(90deg, var(--border) 1px, transparent 1px);
             background-size: 60px 60px;
-            opacity: 0.15;
+            opacity: var(--grid-opacity);
             pointer-events: none;
         }
 
@@ -54,7 +136,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--accent-dim), transparent 70%);
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, #00e5a008, transparent 70%);
         }
 
         /* ── NAV ── */
@@ -63,49 +145,120 @@
             top: 0;
             width: 100%;
             z-index: 100;
-            padding: 1.2rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(20px);
-            background: #0a0a0fcc;
-            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(24px) saturate(1.6);
+            -webkit-backdrop-filter: blur(24px) saturate(1.6);
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .nav-logo {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--accent);
             letter-spacing: 2px;
+            position: relative;
         }
 
-        .nav-links { display: flex; gap: 2rem; }
+        .nav-logo::after {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 2px;
+            background: var(--accent);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
 
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.3s;
             position: relative;
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: -4px;
-            left: 0;
+            bottom: -6px;
+            left: 50%;
             width: 0;
-            height: 1px;
-            background: var(--accent);
-            transition: width 0.3s;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            transition: width 0.3s, left 0.3s;
+            border-radius: 1px;
         }
 
-        .nav-links a:hover { color: var(--accent); }
-        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+            left: 0;
+        }
+
+        /* ── HAMBURGER (mobile) ── */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            z-index: 110;
+        }
+
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .nav-hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .nav-hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
 
         /* ── SECTIONS ── */
         section {
@@ -134,11 +287,12 @@
             color: var(--accent);
             background: var(--accent-dim);
             border: 1px solid var(--accent-mid);
-            padding: 0.4rem 1rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 100px;
             margin-bottom: 2rem;
             width: fit-content;
             animation: fadeIn 0.8s ease-out;
+            backdrop-filter: blur(10px);
         }
 
         .hero-badge .dot {
@@ -146,7 +300,22 @@
             height: 6px;
             border-radius: 50%;
             background: var(--accent);
-            animation: pulse 2s infinite;
+            animation: pulse-dot 2s infinite;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 8px var(--accent);
+            }
+
+            50% {
+                opacity: 0.4;
+                box-shadow: 0 0 2px var(--accent);
+            }
         }
 
         .hero h1 {
@@ -159,10 +328,24 @@
         }
 
         .hero h1 .highlight {
-            background: linear-gradient(135deg, var(--accent), #00b8d4);
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary), #a855f7);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .hero-sub {
@@ -172,6 +355,17 @@
             font-weight: 300;
             margin-bottom: 2.5rem;
             animation: slideUp 0.8s ease-out 0.4s both;
+        }
+
+        /* Typing cursor for hero subtitle */
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background: var(--accent);
+            margin-left: 3px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
         }
 
         .hero-actions {
@@ -185,20 +379,35 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.85rem 2rem;
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
             color: var(--bg-primary);
             font-weight: 600;
             font-size: 0.9rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            transform: translateX(100%);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px #00e5a030;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 40px #00e5a035, 0 0 80px #00e5a015;
         }
 
         .btn-outline {
@@ -206,20 +415,82 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.85rem 2rem;
-            background: transparent;
+            background: var(--glass);
             color: var(--text-primary);
             font-weight: 500;
             font-size: 0.9rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(10px);
         }
 
         .btn-outline:hover {
-            border-color: var(--accent);
+            border-color: var(--accent-mid);
             color: var(--accent);
+            background: var(--accent-dim);
+            transform: translateY(-3px);
+        }
+
+        /* ── HERO CONTACT STRIP ── */
+        .hero-contact {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            animation: slideUp 0.8s ease-out 0.7s both;
+            flex-wrap: wrap;
+        }
+
+        .hero-contact a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 400;
+            transition: all 0.3s;
+            padding: 0.3rem 0;
+            position: relative;
+        }
+
+        .hero-contact a .contact-icon {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: opacity 0.3s, color 0.3s;
+        }
+
+        .hero-contact a:hover {
+            color: var(--accent);
+        }
+
+        .hero-contact a:hover .contact-icon {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .hero-contact a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .hero-contact a:hover::after {
+            width: 100%;
+        }
+
+        .hero-contact-sep {
+            width: 1px;
+            height: 14px;
+            background: var(--border);
         }
 
         /* ── STATS BAR ── */
@@ -229,23 +500,47 @@
             gap: 1px;
             background: var(--border);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             margin-top: 5rem;
             animation: slideUp 0.8s ease-out 0.8s both;
+            position: relative;
+        }
+
+        .stats-bar::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--accent-mid), transparent 40%, transparent 60%, var(--accent-secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 1;
         }
 
         .stat-item {
-            background: var(--bg-card);
+            background: var(--bg-card-solid);
             padding: 1.5rem 1.2rem;
             text-align: center;
+            transition: background 0.3s;
+        }
+
+        .stat-item:hover {
+            background: rgba(18, 18, 30, 0.9);
         }
 
         .stat-num {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1.8rem;
             font-weight: 700;
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-label {
@@ -264,6 +559,17 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-bottom: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-tag::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 1px;
+            background: var(--accent);
         }
 
         .section-title {
@@ -274,7 +580,9 @@
         }
 
         /* ── ABOUT ── */
-        #about { padding-top: 8rem; }
+        #about {
+            padding-top: 8rem;
+        }
 
         .about-grid {
             display: grid;
@@ -288,7 +596,9 @@
             font-size: 1.05rem;
         }
 
-        .about-text p + p { margin-top: 1.2rem; }
+        .about-text p+p {
+            margin-top: 1.2rem;
+        }
 
         .tech-stack {
             display: flex;
@@ -300,67 +610,119 @@
         .tech-tag {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
-            padding: 0.35rem 0.8rem;
-            border-radius: 6px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
             color: var(--text-secondary);
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(10px);
+            cursor: default;
         }
 
         .tech-tag:hover {
-            border-color: var(--accent);
+            border-color: var(--accent-mid);
             color: var(--accent);
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
         /* ── EXPERTISE ── */
-        #expertise { padding-top: 8rem; }
+        #expertise {
+            padding-top: 8rem;
+        }
 
         .expertise-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .exp-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
             padding: 2rem 1.5rem;
-            transition: all 0.4s;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .exp-card::before {
             content: '';
             position: absolute;
+            inset: -1px;
+            border-radius: 16px;
+            padding: 1px;
+            background: conic-gradient(from var(--card-angle, 0deg), transparent 30%, var(--accent) 50%, transparent 70%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .exp-card::after {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            height: 80px;
+            background: linear-gradient(180deg, var(--accent-dim), transparent);
             opacity: 0;
-            transition: opacity 0.4s;
+            transition: opacity 0.5s;
         }
 
         .exp-card:hover {
-            border-color: var(--accent-mid);
-            transform: translateY(-4px);
-            box-shadow: var(--glow);
+            transform: translateY(-6px);
+            box-shadow: var(--glow), 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        .exp-card:hover::before { opacity: 1; }
+        .exp-card:hover::before {
+            opacity: 1;
+            animation: rotateGradient 3s linear infinite;
+        }
+
+        .exp-card:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes rotateGradient {
+            to {
+                --card-angle: 360deg;
+            }
+        }
+
+        @property --card-angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
 
         .exp-icon {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .exp-card:hover .exp-icon {
+            transform: scale(1.15) translateY(-2px);
         }
 
         .exp-card h3 {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.6rem;
+            position: relative;
+            z-index: 1;
         }
 
         .exp-card p {
@@ -368,10 +730,14 @@
             color: var(--text-secondary);
             font-weight: 300;
             line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         /* ── EXPERIENCE TIMELINE ── */
-        #experience { padding-top: 8rem; }
+        #experience {
+            padding-top: 8rem;
+        }
 
         .timeline {
             position: relative;
@@ -384,14 +750,15 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, var(--accent), var(--border));
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--accent-secondary), var(--border));
+            border-radius: 1px;
         }
 
         .timeline-item {
             position: relative;
             padding-bottom: 3rem;
-            padding-left: 2rem;
+            padding-left: 2.5rem;
         }
 
         .timeline-item::before {
@@ -399,11 +766,19 @@
             position: absolute;
             left: -2.35rem;
             top: 0.4rem;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 20px var(--accent-mid), 0 0 40px var(--accent-dim);
+            transition: all 0.4s;
+        }
+
+        .timeline-item:hover::before {
             background: var(--accent);
-            box-shadow: 0 0 12px var(--accent-mid);
+            box-shadow: 0 0 25px var(--accent-mid), 0 0 60px var(--accent-dim);
+            transform: scale(1.3);
         }
 
         .timeline-date {
@@ -433,7 +808,9 @@
         }
 
         /* ── PROJECTS ── */
-        #projects { padding-top: 8rem; }
+        #projects {
+            padding-top: 8rem;
+        }
 
         .project-grid {
             display: grid;
@@ -443,17 +820,39 @@
 
         .project-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
             padding: 2rem;
-            transition: all 0.4s;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 16px;
+            padding: 1px;
+            background: conic-gradient(from var(--card-angle, 0deg), transparent 30%, var(--accent-secondary) 50%, transparent 70%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
         .project-card:hover {
-            border-color: var(--accent-mid);
-            transform: translateY(-3px);
-            box-shadow: var(--glow);
+            transform: translateY(-5px);
+            box-shadow: var(--glow), 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+            animation: rotateGradient 3s linear infinite;
         }
 
         .project-oem {
@@ -463,12 +862,16 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
         }
 
         .project-card h3 {
             font-size: 1.05rem;
             font-weight: 600;
             margin-bottom: 0.6rem;
+            position: relative;
+            z-index: 1;
         }
 
         .project-card p {
@@ -476,6 +879,8 @@
             color: var(--text-secondary);
             font-weight: 300;
             line-height: 1.6;
+            position: relative;
+            z-index: 1;
         }
 
         .project-tags {
@@ -483,19 +888,29 @@
             flex-wrap: wrap;
             gap: 0.4rem;
             margin-top: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .project-tags span {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
             background: var(--accent-dim);
             color: var(--accent);
+            border: 1px solid var(--accent-mid);
+            transition: all 0.3s;
+        }
+
+        .project-tags span:hover {
+            background: var(--accent-mid);
         }
 
         /* ── INTERESTS ── */
-        #interests { padding-top: 8rem; }
+        #interests {
+            padding-top: 8rem;
+        }
 
         .interest-pills {
             display: flex;
@@ -505,20 +920,23 @@
 
         .pill {
             padding: 0.7rem 1.5rem;
-            border: 1px solid var(--border);
+            border: 1px solid var(--glass-border);
             border-radius: 100px;
             font-size: 0.85rem;
             font-weight: 400;
             color: var(--text-secondary);
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: default;
+            backdrop-filter: blur(10px);
+            background: var(--glass);
         }
 
         .pill:hover {
             border-color: var(--accent);
             color: var(--accent);
             background: var(--accent-dim);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px var(--accent-glow);
         }
 
         /* ── CONTACT ── */
@@ -529,12 +947,14 @@
 
         .contact-box {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 3.5rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 4rem;
             text-align: center;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .contact-box::before {
@@ -544,7 +964,36 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at center, var(--accent-dim), transparent 60%);
+            background: radial-gradient(circle at center, var(--accent-dim), transparent 50%);
+            pointer-events: none;
+            animation: contactPulse 6s ease-in-out infinite;
+        }
+
+        @keyframes contactPulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        .contact-box::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--accent-mid), transparent 40%, transparent 60%, var(--accent-secondary));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
             pointer-events: none;
         }
 
@@ -573,20 +1022,24 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.7rem 1.5rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
             color: var(--text-primary);
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 500;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
         }
 
         .contact-link:hover {
             border-color: var(--accent);
             color: var(--accent);
             background: var(--accent-dim);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--accent-glow);
         }
 
         /* ── FOOTER ── */
@@ -594,34 +1047,100 @@
             position: relative;
             z-index: 1;
             text-align: center;
-            padding: 2rem;
-            border-top: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            border-top: 1px solid var(--glass-border);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.7rem;
             color: var(--text-muted);
             letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        .footer-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-blobs {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .footer-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+        }
+
+        .footer-blob:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            left: 10%;
+            top: -60%;
+            animation: floatBlob 8s ease-in-out infinite;
+        }
+
+        .footer-blob:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            background: var(--accent-secondary);
+            right: 15%;
+            top: -40%;
+            animation: floatBlob 10s ease-in-out infinite reverse;
+        }
+
+        .footer-blob:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            background: #a855f7;
+            left: 50%;
+            top: -30%;
+            animation: floatBlob 12s ease-in-out infinite 2s;
+        }
+
+        @keyframes floatBlob {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-20px) scale(1.1);
+            }
         }
 
         /* ── ANIMATIONS ── */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .reveal.visible {
@@ -629,294 +1148,1123 @@
             transform: translateY(0);
         }
 
+        /* ── COUNT-UP ANIMATION ── */
+        .stat-num {
+            transition: all 0.3s;
+        }
+
+        /* ── ANTIGRAVITY FLOATING ORBS ── */
+        .ag-orbs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .ag-orb {
+            position: absolute;
+            border-radius: 50%;
+            will-change: transform;
+        }
+
+        .ag-orb:nth-child(1) {
+            width: 8px;
+            height: 8px;
+            background: #ff4444;
+            left: 10%;
+            top: 20%;
+            animation: agFloat1 14s ease-in-out infinite;
+        }
+
+        .ag-orb:nth-child(2) {
+            width: 6px;
+            height: 6px;
+            background: #ffbb33;
+            left: 25%;
+            top: 60%;
+            animation: agFloat2 18s ease-in-out infinite 1s;
+        }
+
+        .ag-orb:nth-child(3) {
+            width: 10px;
+            height: 10px;
+            background: #4285f4;
+            left: 70%;
+            top: 30%;
+            animation: agFloat3 16s ease-in-out infinite 2s;
+        }
+
+        .ag-orb:nth-child(4) {
+            width: 5px;
+            height: 5px;
+            background: #34a853;
+            left: 85%;
+            top: 70%;
+            animation: agFloat1 20s ease-in-out infinite 3s;
+        }
+
+        .ag-orb:nth-child(5) {
+            width: 7px;
+            height: 7px;
+            background: var(--accent);
+            left: 50%;
+            top: 15%;
+            animation: agFloat2 15s ease-in-out infinite 0.5s;
+        }
+
+        .ag-orb:nth-child(6) {
+            width: 4px;
+            height: 4px;
+            background: #a855f7;
+            left: 35%;
+            top: 80%;
+            animation: agFloat3 22s ease-in-out infinite 4s;
+        }
+
+        .ag-orb:nth-child(7) {
+            width: 9px;
+            height: 9px;
+            background: var(--accent-secondary);
+            left: 60%;
+            top: 50%;
+            animation: agFloat1 17s ease-in-out infinite 2.5s;
+        }
+
+        .ag-orb:nth-child(8) {
+            width: 6px;
+            height: 6px;
+            background: #ff6b9d;
+            left: 90%;
+            top: 40%;
+            animation: agFloat2 19s ease-in-out infinite 1.5s;
+        }
+
+        @keyframes agFloat1 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.6;
+            }
+
+            25% {
+                transform: translate(30px, -60px) scale(1.3);
+                opacity: 0.9;
+            }
+
+            50% {
+                transform: translate(-20px, -120px) scale(0.8);
+                opacity: 0.5;
+            }
+
+            75% {
+                transform: translate(50px, -40px) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes agFloat2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.5;
+            }
+
+            33% {
+                transform: translate(-40px, -80px) scale(1.2);
+                opacity: 0.8;
+            }
+
+            66% {
+                transform: translate(20px, -50px) scale(0.9);
+                opacity: 0.4;
+            }
+        }
+
+        @keyframes agFloat3 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.7;
+            }
+
+            20% {
+                transform: translate(60px, -30px) scale(0.7);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-30px, -100px) scale(1.4);
+                opacity: 0.9;
+            }
+
+            80% {
+                transform: translate(40px, -60px) scale(0.9);
+                opacity: 0.6;
+            }
+        }
+
+        /* ── AURORA AMBIENT GLOW ── */
+        .aurora-glow {
+            position: absolute;
+            width: 100%;
+            height: 400px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .aurora-glow.visible {
+            opacity: 1;
+        }
+
+        .aurora-glow::before,
+        .aurora-glow::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+        }
+
+        .aurora-glow::before {
+            width: 500px;
+            height: 300px;
+            background: rgba(0, 229, 160, 0.06);
+            left: -10%;
+            top: -50%;
+            animation: auroraShift 8s ease-in-out infinite;
+        }
+
+        .aurora-glow::after {
+            width: 400px;
+            height: 250px;
+            background: rgba(0, 184, 212, 0.05);
+            right: -5%;
+            top: -30%;
+            animation: auroraShift 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes auroraShift {
+
+            0%,
+            100% {
+                transform: translateX(0) scale(1);
+            }
+
+            50% {
+                transform: translateX(40px) scale(1.15);
+            }
+        }
+
+        /* ── SINUSOIDAL ICON WAVE DIVIDER ── */
+        .wave-divider {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2.5rem;
+            padding: 4rem 0;
+            overflow: hidden;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .wave-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            font-size: 1.2rem;
+            animation: sineWave 4s ease-in-out infinite;
+            will-change: transform;
+            backdrop-filter: blur(10px);
+        }
+
+        .wave-icon:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .wave-icon:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .wave-icon:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .wave-icon:nth-child(4) {
+            animation-delay: 0.9s;
+        }
+
+        .wave-icon:nth-child(5) {
+            animation-delay: 1.2s;
+        }
+
+        .wave-icon:nth-child(6) {
+            animation-delay: 1.5s;
+        }
+
+        .wave-icon:nth-child(7) {
+            animation-delay: 1.8s;
+        }
+
+        @keyframes sineWave {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-18px);
+            }
+        }
+
+        /* ── SCROLL-DRIVEN PARALLAX ── */
+        .parallax-section {
+            transform: translateY(0);
+            transition: transform 0.1s linear;
+            will-change: transform;
+        }
+
+        /* ── WEIGHTLESS CARD HOVER (antigravity lift) ── */
+        .ag-lift {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ag-lift:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 80px rgba(0, 229, 160, 0.08), 0 0 120px rgba(0, 229, 160, 0.04);
+        }
+
+        /* ── MAGNETIC TEXT (letters spread on hover) ── */
+        .magnetic-text {
+            display: inline-block;
+            transition: letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .magnetic-text:hover {
+            letter-spacing: 6px;
+        }
+
+        /* ── SCROLL-TRIGGERED SCALE REVEAL ── */
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9) translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* ── FLOATING BADGE ── */
+        .hero-badge {
+            animation: fadeIn 0.8s ease-out, floatBadge 6s ease-in-out infinite 1s;
+        }
+
+        @keyframes floatBadge {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* ── THEME TOGGLE ── */
+        .theme-toggle {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            border-radius: 100px;
+            background: var(--bg-card-solid);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: all 0.4s ease;
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-mid);
+        }
+
+        .theme-toggle-thumb {
+            position: absolute;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        [data-theme="light"] .theme-toggle-thumb {
+            left: calc(100% - 25px);
+        }
+
+        .theme-toggle .icon-moon,
+        .theme-toggle .icon-sun {
+            transition: opacity 0.3s, transform 0.3s;
+            position: absolute;
+            line-height: 1;
+        }
+
+        .theme-toggle .icon-moon {
+            opacity: 1;
+        }
+
+        .theme-toggle .icon-sun {
+            opacity: 0;
+            transform: rotate(-90deg);
+        }
+
+        [data-theme="light"] .theme-toggle .icon-moon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+
+        [data-theme="light"] .theme-toggle .icon-sun {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        /* Light mode: soften orbs */
+        .ag-orbs {
+            opacity: var(--orb-opacity);
+            transition: opacity 0.5s ease;
+        }
+
+        /* Light mode: particle canvas handled via JS + CSS var */
+        [data-theme="light"] .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary), #7c3aed);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        /* Smooth transition on theme change */
+        body,
+        nav,
+        .exp-card,
+        .project-card,
+        .contact-box,
+        .stat-item,
+        .pill,
+        .tech-tag,
+        .contact-link,
+        .btn-primary,
+        .btn-outline,
+        footer {
+            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
-            nav { padding: 1rem; }
-            .nav-links { gap: 1rem; }
-            .nav-links a { font-size: 0.7rem; }
-            .stats-bar { grid-template-columns: repeat(2, 1fr); }
-            .about-grid { grid-template-columns: 1fr; }
-            .expertise-grid { grid-template-columns: 1fr; }
-            .project-grid { grid-template-columns: 1fr; }
-            .contact-box { padding: 2rem 1.5rem; }
-            .contact-links { flex-direction: column; align-items: center; }
-            .hero-actions { flex-direction: column; }
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                max-width: 300px;
+                height: 100vh;
+                flex-direction: column;
+                background: rgba(6, 6, 11, 0.95);
+                backdrop-filter: blur(24px);
+                padding: 5rem 2rem 2rem;
+                gap: 1.5rem;
+                transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                border-left: 1px solid var(--glass-border);
+                z-index: 105;
+            }
+
+            .nav-links.open {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .nav-hamburger {
+                display: flex;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .expertise-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .cursor-glow {
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="grid-bg"></div>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="grid-bg"></div>
 
-<!-- NAV -->
-<nav>
-    <div class="nav-logo">KD_</div>
-    <div class="nav-links">
-        <a href="#about">About</a>
-        <a href="#expertise">Expertise</a>
-        <a href="#experience">Experience</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
-    </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-    <div class="hero-badge">
-        <span class="dot"></span>
-        Open to Opportunities
-    </div>
-    <h1>BIW Robotic<br><span class="highlight">Simulation Engineer</span></h1>
-    <p class="hero-sub">
-        8.5+ years driving automotive manufacturing innovation through robotic simulation, process planning, and digital twin technologies for global OEMs.
-    </p>
-    <div class="hero-actions">
-        <a href="#contact" class="btn-primary">Get In Touch ↗</a>
-        <a href="#projects" class="btn-outline">View Projects</a>
+    <!-- ANTIGRAVITY FLOATING ORBS -->
+    <div class="ag-orbs">
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
+        <div class="ag-orb"></div>
     </div>
 
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-num">8.5+</div>
-            <div class="stat-label">Years Experience</div>
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">KD_</div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
+            <a href="#about">About</a>
+            <a href="#expertise">Expertise</a>
+            <a href="#experience">Experience</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
         </div>
-        <div class="stat-item">
-            <div class="stat-num">6+</div>
-            <div class="stat-label">Global OEMs</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num">5+</div>
-            <div class="stat-label">Simulation Tools</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-num">3</div>
-            <div class="stat-label">Programming Languages</div>
-        </div>
-    </div>
-</section>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <div class="theme-toggle-thumb">
+                <span class="icon-moon">🌙</span>
+                <span class="icon-sun">☀️</span>
+            </div>
+        </button>
+    </nav>
 
-<!-- ABOUT -->
-<section id="about">
-    <div class="section-tag reveal">// About</div>
-    <h2 class="section-title reveal">Engineering the<br>Future of Manufacturing</h2>
-    <div class="about-grid">
-        <div class="about-text reveal">
-            <p>
-                I specialize in Body-in-White (BIW) robotic simulation for the automotive industry — from process planning and plant engineering to offline programming and virtual commissioning of welding and assembly lines.
-            </p>
-            <p>
-                My work spans global OEMs including Mercedes-Benz, BMW, Daimler, Volkswagen, SCANIA, and CEER, where I've optimized cycle times, validated robot reach, and ensured collision-free production cells — all before a single robot hits the shop floor.
-            </p>
-            <p>
-                Currently based in Gurugram, India, I'm passionate about leveraging digital twin technologies and automation to push the boundaries of what's possible in modern manufacturing.
-            </p>
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            Open to Opportunities
         </div>
-        <div class="reveal">
-            <div class="tech-stack">
-                <span class="tech-tag">DELMIA V5</span>
-                <span class="tech-tag">Process Simulate</span>
-                <span class="tech-tag">ABB RobotStudio</span>
-                <span class="tech-tag">Python</span>
-                <span class="tech-tag">C++</span>
-                <span class="tech-tag">MATLAB</span>
-                <span class="tech-tag">OPC UA</span>
-                <span class="tech-tag">TIA Portal</span>
-                <span class="tech-tag">Factory I/O</span>
-                <span class="tech-tag">PLC Programming</span>
-                <span class="tech-tag">Virtual Commissioning</span>
-                <span class="tech-tag">Offline Programming</span>
-                <span class="tech-tag">3D Printing</span>
-                <span class="tech-tag">AR/VR</span>
-                <span class="tech-tag">LaTeX</span>
+        <h1>BIW Robotic<br><span class="highlight" id="heroTyping">Simulation Engineer</span></h1>
+        <p class="hero-sub">
+            8.5+ years driving automotive manufacturing innovation through robotic simulation, process planning, and
+            digital twin technologies for global OEMs.<span class="typing-cursor"></span>
+        </p>
+        <div class="hero-actions">
+            <a href="#contact" class="btn-primary">Get In Touch ↗</a>
+            <a href="#projects" class="btn-outline">View Projects</a>
+        </div>
+
+        <div class="hero-contact">
+            <a href="mailto:kuldeep119955@gmail.com"><span class="contact-icon">✉</span> kuldeep119955@gmail.com</a>
+            <span class="hero-contact-sep"></span>
+            <a href="https://www.linkedin.com/in/kuldeep23/" target="_blank"><span class="contact-icon">⟐</span>
+                LinkedIn</a>
+            <span class="hero-contact-sep"></span>
+            <a href="https://github.com/kuldeepkdv" target="_blank"><span class="contact-icon">◈</span> GitHub</a>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-num" data-target="8.5" data-suffix="+">0</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" data-target="6" data-suffix="+">0</div>
+                <div class="stat-label">Global OEMs</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" data-target="5" data-suffix="+">0</div>
+                <div class="stat-label">Simulation Tools</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" data-target="3" data-suffix="">0</div>
+                <div class="stat-label">Programming Languages</div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- EXPERTISE -->
-<section id="expertise">
-    <div class="section-tag reveal">// Expertise</div>
-    <h2 class="section-title reveal">Core Competencies</h2>
-    <div class="expertise-grid">
-        <div class="exp-card reveal">
-            <div class="exp-icon">🤖</div>
-            <h3>Robotic Simulation</h3>
-            <p>Offline programming, reach analysis, collision detection, and cycle time optimization for multi-robot welding and assembly cells.</p>
-        </div>
-        <div class="exp-card reveal">
-            <div class="exp-icon">🏭</div>
-            <h3>Process Planning</h3>
-            <p>End-to-end BIW process planning including station allocation, tooling design validation, and production sequencing for automotive body shops.</p>
-        </div>
-        <div class="exp-card reveal">
-            <div class="exp-icon">⚡</div>
-            <h3>EV Battery Assembly</h3>
-            <p>Simulation and process engineering for electric vehicle battery module and pack assembly lines — the next frontier of automotive.</p>
-        </div>
-        <div class="exp-card reveal">
-            <div class="exp-icon">🔗</div>
-            <h3>Digital Twin</h3>
-            <p>Building virtual replicas of production environments for real-time monitoring, predictive maintenance, and continuous optimization.</p>
-        </div>
-        <div class="exp-card reveal">
-            <div class="exp-icon">🎯</div>
-            <h3>Virtual Commissioning</h3>
-            <p>PLC validation and signal mapping in virtual environments, reducing on-site commissioning time and risk significantly.</p>
-        </div>
-        <div class="exp-card reveal">
-            <div class="exp-icon">📐</div>
-            <h3>Plant Engineering</h3>
-            <p>Layout optimization, material flow analysis, and ergonomic assessment for welding lines and assembly stations at scale.</p>
-        </div>
-    </div>
-</section>
-
-<!-- EXPERIENCE -->
-<section id="experience">
-    <div class="section-tag reveal">// Experience</div>
-    <h2 class="section-title reveal">Career Timeline</h2>
-    <div class="timeline">
-        <div class="timeline-item reveal">
-            <div class="timeline-date">PRESENT</div>
-            <h3>BIW Robotic Simulation Engineer</h3>
-            <div class="timeline-company">Global Automotive OEMs — Gurugram, India</div>
-            <p>Leading robotic simulation for BIW welding and assembly lines, working with DELMIA V5, Process Simulate, and ABB RobotStudio. Focused on EV battery assembly processes and digital twin implementation.</p>
-        </div>
-        <div class="timeline-item reveal">
-            <div class="timeline-date">KEY PROJECTS</div>
-            <h3>Process Planning & Plant Engineering</h3>
-            <div class="timeline-company">Mercedes-Benz · BMW · Daimler · VW · SCANIA · CEER</div>
-            <p>Delivered process planning solutions for major European and global OEMs, spanning welding line simulation, cycle time optimization, and production cell validation across multiple vehicle programs.</p>
-        </div>
-        <div class="timeline-item reveal">
-            <div class="timeline-date">CONTINUOUS</div>
-            <h3>Technical Exploration & Content Creation</h3>
-            <div class="timeline-company">Personal Development</div>
-            <p>Developing educational content around PLC programming, industrial automation, and robotics simulation. Exploring headless simulation tools, API development, and advanced manufacturing protocols.</p>
-        </div>
-    </div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-    <div class="section-tag reveal">// Projects</div>
-    <h2 class="section-title reveal">Selected Work</h2>
-    <div class="project-grid">
-        <div class="project-card reveal">
-            <div class="project-oem">Mercedes-Benz / BMW / Daimler</div>
-            <h3>BIW Welding Line Simulation</h3>
-            <p>Complete robotic simulation for multi-station welding lines including OLP, reach studies, collision analysis, and cycle time optimization for body-in-white production.</p>
-            <div class="project-tags">
-                <span>DELMIA V5</span>
-                <span>OLP</span>
-                <span>Spot Welding</span>
-                <span>Cycle Time</span>
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="section-tag reveal">About</div>
+        <h2 class="section-title reveal">Engineering the<br>Future of Manufacturing</h2>
+        <div class="about-grid">
+            <div class="about-text reveal">
+                <p>
+                    I specialize in Body-in-White (BIW) robotic simulation for the automotive industry — from process
+                    planning and plant engineering to offline programming and virtual commissioning of welding and
+                    assembly lines.
+                </p>
+                <p>
+                    My work spans global OEMs including Mercedes-Benz, BMW, Daimler, Volkswagen, SCANIA, and CEER, where
+                    I've optimized cycle times, validated robot reach, and ensured collision-free production cells — all
+                    before a single robot hits the shop floor.
+                </p>
+                <p>
+                    Currently based in Gurugram, India, I'm passionate about leveraging digital twin technologies and
+                    automation to push the boundaries of what's possible in modern manufacturing.
+                </p>
+            </div>
+            <div class="reveal">
+                <div class="tech-stack">
+                    <span class="tech-tag">DELMIA V5</span>
+                    <span class="tech-tag">Process Simulate</span>
+                    <span class="tech-tag">ABB RobotStudio</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">MATLAB</span>
+                    <span class="tech-tag">OPC UA</span>
+                    <span class="tech-tag">TIA Portal</span>
+                    <span class="tech-tag">Factory I/O</span>
+                    <span class="tech-tag">PLC Programming</span>
+                    <span class="tech-tag">Virtual Commissioning</span>
+                    <span class="tech-tag">Offline Programming</span>
+                    <span class="tech-tag">3D Printing</span>
+                    <span class="tech-tag">AR/VR</span>
+                    <span class="tech-tag">LaTeX</span>
+                </div>
             </div>
         </div>
-        <div class="project-card reveal">
-            <div class="project-oem">Electric Vehicle Programs</div>
-            <h3>EV Battery Assembly Simulation</h3>
-            <p>Process planning and simulation for electric vehicle battery module and pack assembly lines, including adhesive dispensing, fastening, and quality inspection stations.</p>
-            <div class="project-tags">
-                <span>Process Simulate</span>
-                <span>EV Battery</span>
-                <span>Assembly</span>
-            </div>
-        </div>
-        <div class="project-card reveal">
-            <div class="project-oem">Industrial Automation</div>
-            <h3>PLC & Factory I/O Tutorials</h3>
-            <p>Comprehensive educational series covering TIA Portal programming with Factory I/O simulation — from digital I/O basics to advanced Function Blocks and Data Blocks.</p>
-            <div class="project-tags">
-                <span>TIA Portal</span>
-                <span>Factory I/O</span>
-                <span>PLC</span>
-                <span>Education</span>
-            </div>
-        </div>
-        <div class="project-card reveal">
-            <div class="project-oem">Research & Development</div>
-            <h3>Headless Simulation & API Dev</h3>
-            <p>Exploring batch processing capabilities of Tecnomatix Process Simulate and developing API interfaces using OPC UA protocols for manufacturing environments.</p>
-            <div class="project-tags">
-                <span>OPC UA</span>
-                <span>Python</span>
-                <span>API</span>
-                <span>Automation</span>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<!-- INTERESTS -->
-<section id="interests">
-    <div class="section-tag reveal">// Interests</div>
-    <h2 class="section-title reveal">What Drives Me</h2>
-    <div class="interest-pills">
-        <span class="pill reveal">Industrial Robotics</span>
-        <span class="pill reveal">Warehouse Automation</span>
-        <span class="pill reveal">Virtual Commissioning</span>
-        <span class="pill reveal">3D Printing</span>
-        <span class="pill reveal">AR / VR</span>
-        <span class="pill reveal">Digital Twin</span>
-        <span class="pill reveal">EV Manufacturing</span>
-        <span class="pill reveal">Offline Programming</span>
-        <span class="pill reveal">Project Management</span>
-        <span class="pill reveal">Universal Robots</span>
-        <span class="pill reveal">Industry 4.0</span>
+    <!-- WAVE DIVIDER 1 -->
+    <div class="wave-divider">
+        <div class="wave-icon">🤖</div>
+        <div class="wave-icon">⚡</div>
+        <div class="wave-icon">🔗</div>
+        <div class="wave-icon">🏭</div>
+        <div class="wave-icon">🎯</div>
+        <div class="wave-icon">📐</div>
+        <div class="wave-icon">⚙️</div>
     </div>
-</section>
 
-<!-- CONTACT -->
-<section id="contact">
-    <div class="contact-box reveal">
-        <h2>Let's Build Something</h2>
-        <p>Looking for a simulation engineer who bridges the gap between virtual and physical manufacturing? Let's connect.</p>
-        <div class="contact-links">
+    <!-- EXPERTISE -->
+    <section id="expertise" class="parallax-section" data-parallax-speed="0.03">
+        <div class="aurora-glow reveal"></div>
+        <div class="section-tag reveal">Expertise</div>
+        <h2 class="section-title reveal magnetic-text">Core Competencies</h2>
+        <div class="expertise-grid">
+            <div class="exp-card reveal ag-lift">
+                <div class="exp-icon">🤖</div>
+                <h3>Robotic Simulation</h3>
+                <p>Offline programming, reach analysis, collision detection, and cycle time optimization for multi-robot
+                    welding and assembly cells.</p>
+            </div>
+            <div class="exp-card reveal">
+                <div class="exp-icon">🏭</div>
+                <h3>Process Planning</h3>
+                <p>End-to-end BIW process planning including station allocation, tooling design validation, and
+                    production sequencing for automotive body shops.</p>
+            </div>
+            <div class="exp-card reveal">
+                <div class="exp-icon">⚡</div>
+                <h3>EV Battery Assembly</h3>
+                <p>Simulation and process engineering for electric vehicle battery module and pack assembly lines — the
+                    next frontier of automotive.</p>
+            </div>
+            <div class="exp-card reveal">
+                <div class="exp-icon">🔗</div>
+                <h3>Digital Twin</h3>
+                <p>Building virtual replicas of production environments for real-time monitoring, predictive
+                    maintenance, and continuous optimization.</p>
+            </div>
+            <div class="exp-card reveal">
+                <div class="exp-icon">🎯</div>
+                <h3>Virtual Commissioning</h3>
+                <p>PLC validation and signal mapping in virtual environments, reducing on-site commissioning time and
+                    risk significantly.</p>
+            </div>
+            <div class="exp-card reveal">
+                <div class="exp-icon">📐</div>
+                <h3>Plant Engineering</h3>
+                <p>Layout optimization, material flow analysis, and ergonomic assessment for welding lines and assembly
+                    stations at scale.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+        <div class="section-tag reveal">Experience</div>
+        <h2 class="section-title reveal">Career Timeline</h2>
+        <div class="timeline">
+            <div class="timeline-item reveal">
+                <div class="timeline-date">PRESENT</div>
+                <h3>BIW Robotic Simulation Engineer</h3>
+                <div class="timeline-company">Global Automotive OEMs — Gurugram, India</div>
+                <p>Leading robotic simulation for BIW welding and assembly lines, working with DELMIA V5, Process
+                    Simulate, and ABB RobotStudio. Focused on EV battery assembly processes and digital twin
+                    implementation.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-date">KEY PROJECTS</div>
+                <h3>Process Planning & Plant Engineering</h3>
+                <div class="timeline-company">Mercedes-Benz · BMW · Daimler · VW · SCANIA · CEER</div>
+                <p>Delivered process planning solutions for major European and global OEMs, spanning welding line
+                    simulation, cycle time optimization, and production cell validation across multiple vehicle
+                    programs.</p>
+            </div>
+            <div class="timeline-item reveal">
+                <div class="timeline-date">CONTINUOUS</div>
+                <h3>Technical Exploration & Content Creation</h3>
+                <div class="timeline-company">Personal Development</div>
+                <p>Developing educational content around PLC programming, industrial automation, and robotics
+                    simulation. Exploring headless simulation tools, API development, and advanced manufacturing
+                    protocols.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WAVE DIVIDER 2 -->
+    <div class="wave-divider">
+        <div class="wave-icon">💡</div>
+        <div class="wave-icon">🚀</div>
+        <div class="wave-icon">🔧</div>
+        <div class="wave-icon">📊</div>
+        <div class="wave-icon">🌐</div>
+    </div>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="parallax-section" data-parallax-speed="0.02">
+        <div class="aurora-glow reveal"></div>
+        <div class="section-tag reveal">Projects</div>
+        <h2 class="section-title reveal magnetic-text">Selected Work</h2>
+        <div class="project-grid">
+            <div class="project-card reveal ag-lift">
+                <div class="project-oem">Mercedes-Benz / BMW / Daimler</div>
+                <h3>BIW Welding Line Simulation</h3>
+                <p>Complete robotic simulation for multi-station welding lines including OLP, reach studies, collision
+                    analysis, and cycle time optimization for body-in-white production.</p>
+                <div class="project-tags">
+                    <span>DELMIA V5</span>
+                    <span>OLP</span>
+                    <span>Spot Welding</span>
+                    <span>Cycle Time</span>
+                </div>
+            </div>
+            <div class="project-card reveal ag-lift">
+                <div class="project-oem">Electric Vehicle Programs</div>
+                <h3>EV Battery Assembly Simulation</h3>
+                <p>Process planning and simulation for electric vehicle battery module and pack assembly lines,
+                    including adhesive dispensing, fastening, and quality inspection stations.</p>
+                <div class="project-tags">
+                    <span>Process Simulate</span>
+                    <span>EV Battery</span>
+                    <span>Assembly</span>
+                </div>
+            </div>
+            <div class="project-card reveal ag-lift">
+                <div class="project-oem">Industrial Automation</div>
+                <h3>PLC & Factory I/O Tutorials</h3>
+                <p>Comprehensive educational series covering TIA Portal programming with Factory I/O simulation — from
+                    digital I/O basics to advanced Function Blocks and Data Blocks.</p>
+                <div class="project-tags">
+                    <span>TIA Portal</span>
+                    <span>Factory I/O</span>
+                    <span>PLC</span>
+                    <span>Education</span>
+                </div>
+            </div>
+            <div class="project-card reveal ag-lift">
+                <div class="project-oem">Research & Development</div>
+                <h3>Headless Simulation & API Dev</h3>
+                <p>Exploring batch processing capabilities of Tecnomatix Process Simulate and developing API interfaces
+                    using OPC UA protocols for manufacturing environments.</p>
+                <div class="project-tags">
+                    <span>OPC UA</span>
+                    <span>Python</span>
+                    <span>API</span>
+                    <span>Automation</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERESTS -->
+    <section id="interests">
+        <div class="section-tag reveal">Interests</div>
+        <h2 class="section-title reveal">What Drives Me</h2>
+        <div class="interest-pills">
+            <span class="pill reveal">Industrial Robotics</span>
+            <span class="pill reveal">Warehouse Automation</span>
+            <span class="pill reveal">Virtual Commissioning</span>
+            <span class="pill reveal">3D Printing</span>
+            <span class="pill reveal">AR / VR</span>
+            <span class="pill reveal">Digital Twin</span>
+            <span class="pill reveal">EV Manufacturing</span>
+            <span class="pill reveal">Offline Programming</span>
+            <span class="pill reveal">Project Management</span>
+            <span class="pill reveal">Universal Robots</span>
+            <span class="pill reveal">Industry 4.0</span>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="contact-box reveal">
+            <h2>Let's Build Something</h2>
+            <p>Looking for a simulation engineer who bridges the gap between virtual and physical manufacturing? Let's
+                connect.</p>
+            <div class="contact-links">
                 <a href="mailto:kuldeep119955@gmail.com" class="contact-link">✉ Email</a>
                 <a href="https://www.linkedin.com/in/kuldeep23/" class="contact-link" target="_blank">⟐ LinkedIn</a>
                 <a href="https://github.com/kuldeepkdv" class="contact-link" target="_blank">◈ GitHub</a>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<footer>
-    © 2026 KD — Built with precision
-</footer>
+    <footer>
+        <div class="footer-blobs">
+            <div class="footer-blob"></div>
+            <div class="footer-blob"></div>
+            <div class="footer-blob"></div>
+        </div>
+        <div class="footer-content">
+            © 2026 KD — Built with precision
+        </div>
+    </footer>
 
-<script>
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
+    <script>
+        // ── PARTICLE CANVAS ──
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let mouseX = 0, mouseY = 0;
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.hue = Math.random() > 0.5 ? 160 : 190; // teal or cyan
+            }
+            update() {
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 200) {
+                    this.x -= dx * 0.005;
+                    this.y -= dy * 0.005;
+                }
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        // Create particles
+        const particleCount = Math.min(80, Math.floor(window.innerWidth / 15));
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `hsla(160, 80%, 65%, ${0.06 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            drawConnections();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ── CURSOR GLOW ──
+        const cursorGlow = document.getElementById('cursorGlow');
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        // ── SCROLL PROGRESS ──
+        const scrollProgress = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            scrollProgress.style.width = progress + '%';
+        });
+
+        // ── STAGGERED SCROLL REVEAL ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // Find siblings to stagger
+                    const parent = entry.target.parentElement;
+                    const siblings = Array.from(parent.querySelectorAll('.reveal'));
+                    const idx = siblings.indexOf(entry.target);
+                    const delay = Math.max(0, idx) * 100;
+
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ── SMOOTH NAV HIGHLIGHT ──
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const top = section.offsetTop - 120;
+                if (window.scrollY >= top) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+            });
+        });
+
+        // ── HERO TYPING ANIMATION ──
+        const heroTyping = document.getElementById('heroTyping');
+        const titles = ['Simulation Engineer', 'Digital Twin Builder', 'Automation Expert', 'Process Planner'];
+        let titleIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+        let typeSpeed = 100;
+
+        function typeLoop() {
+            const current = titles[titleIdx];
+            if (isDeleting) {
+                heroTyping.textContent = current.substring(0, charIdx - 1);
+                charIdx--;
+                typeSpeed = 50;
+            } else {
+                heroTyping.textContent = current.substring(0, charIdx + 1);
+                charIdx++;
+                typeSpeed = 100;
+            }
+
+            if (!isDeleting && charIdx === current.length) {
+                typeSpeed = 2500; // pause at end
+                isDeleting = true;
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                titleIdx = (titleIdx + 1) % titles.length;
+                typeSpeed = 400; // pause before next word
+            }
+
+            setTimeout(typeLoop, typeSpeed);
+        }
+
+        // Start after initial animation
+        setTimeout(typeLoop, 3000);
+
+        // ── COUNT-UP STATS ──
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNums = entry.target.querySelectorAll('.stat-num');
+                    statNums.forEach(num => {
+                        const target = parseFloat(num.dataset.target);
+                        const suffix = num.dataset.suffix || '';
+                        const isFloat = target % 1 !== 0;
+                        const duration = 2000;
+                        const startTime = performance.now();
+
+                        function updateCount(currentTime) {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            // Ease out cubic
+                            const eased = 1 - Math.pow(1 - progress, 3);
+                            const currentVal = eased * target;
+
+                            num.textContent = (isFloat ? currentVal.toFixed(1) : Math.floor(currentVal)) + suffix;
+
+                            if (progress < 1) {
+                                requestAnimationFrame(updateCount);
+                            }
+                        }
+                        requestAnimationFrame(updateCount);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statsObserver.observe(document.getElementById('statsBar'));
+
+        // ── HERO PARALLAX ON MOUSE ──
+        const hero = document.querySelector('.hero');
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+            const statsBar = document.getElementById('statsBar');
+            statsBar.style.transform = `perspective(1000px) rotateX(${-y * 3}deg) rotateY(${x * 3}deg)`;
+            statsBar.style.transition = 'transform 0.15s ease-out';
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            const statsBar = document.getElementById('statsBar');
+            statsBar.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+            statsBar.style.transition = 'transform 0.6s ease-out';
+        });
+
+        // ── MOBILE NAV ──
+        const hamburger = document.getElementById('navHamburger');
+        const navLinksContainer = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            navLinksContainer.classList.toggle('open');
+        });
+
+        navLinksContainer.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('open');
+                navLinksContainer.classList.remove('open');
+            });
+        });
+
+        // ── SCROLL-DRIVEN PARALLAX ──
+        const parallaxSections = document.querySelectorAll('.parallax-section');
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            parallaxSections.forEach(section => {
+                const speed = parseFloat(section.dataset.parallaxSpeed) || 0.03;
+                const rect = section.getBoundingClientRect();
+                const offsetFromCenter = rect.top - window.innerHeight / 2;
+                section.style.transform = `translateY(${offsetFromCenter * speed}px)`;
+            });
+        });
+
+        // ── AURORA GLOW REVEAL ──
+        const auroraObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                }, i * 80);
-                observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.aurora-glow').forEach(el => auroraObserver.observe(el));
+
+        // ── REVEAL-SCALE OBSERVER ──
+        document.querySelectorAll('.reveal-scale').forEach(el => observer.observe(el));
+
+        // ── THEME TOGGLE ──
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlEl = document.documentElement;
+
+        // Restore saved theme
+        const savedTheme = localStorage.getItem('kd-theme');
+        if (savedTheme) {
+            htmlEl.setAttribute('data-theme', savedTheme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = htmlEl.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            if (next === 'dark') {
+                htmlEl.removeAttribute('data-theme');
+            } else {
+                htmlEl.setAttribute('data-theme', next);
             }
+            localStorage.setItem('kd-theme', next);
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // Smooth nav highlight
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
-
-    window.addEventListener('scroll', () => {
-        let current = '';
-        sections.forEach(section => {
-            const top = section.offsetTop - 100;
-            if (window.scrollY >= top) {
-                current = section.getAttribute('id');
-            }
-        });
-        navLinks.forEach(link => {
-            link.style.color = link.getAttribute('href') === '#' + current
-                ? 'var(--accent)' : '';
-        });
-    });
-</script>
+    </script>
 
 </body>
+
 </html>
