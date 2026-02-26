@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KD — BIW Robotic Simulation Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --accent: #00e5a0;
+            --accent-dim: #00e5a020;
+            --accent-mid: #00e5a050;
+            --text-primary: #e8e8ec;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --border: #22223a;
+            --glow: 0 0 40px #00e5a015;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-dim) var(--bg-primary);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── GRID BACKGROUND ── */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .grid-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--accent-dim), transparent 70%);
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: #0a0a0fcc;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        .nav-links { display: flex; gap: 2rem; }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* ── SECTIONS ── */
+        section {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 5rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-mid);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            margin-bottom: 2rem;
+            width: fit-content;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 1.5rem;
+            animation: slideUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), #00b8d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            animation: slideUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            animation: slideUp 0.8s ease-out 0.6s both;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: var(--accent);
+            color: var(--bg-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px #00e5a030;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            background: transparent;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 5rem;
+            animation: slideUp 0.8s ease-out 0.8s both;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            padding: 1.5rem 1.2rem;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.3rem;
+        }
+
+        /* ── SECTION HEADERS ── */
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 3rem;
+        }
+
+        /* ── ABOUT ── */
+        #about { padding-top: 8rem; }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .about-text {
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-size: 1.05rem;
+        }
+
+        .about-text p + p { margin-top: 1.2rem; }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .tech-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── EXPERTISE ── */
+        #expertise { padding-top: 8rem; }
+
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .exp-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .exp-card:hover {
+            border-color: var(--accent-mid);
+            transform: translateY(-4px);
+            box-shadow: var(--glow);
+        }
+
+        .exp-card:hover::before { opacity: 1; }
+
+        .exp-icon {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .exp-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .exp-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* ── EXPERIENCE TIMELINE ── */
+        #experience { padding-top: 8rem; }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--accent), var(--border));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 3rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.35rem;
+            top: 0.4rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent-mid);
+        }
+
+        .timeline-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-item h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .timeline-company {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-item p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* ── PROJECTS ── */
+        #projects { padding-top: 8rem; }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent-mid);
+            transform: translateY(-3px);
+            box-shadow: var(--glow);
+        }
+
+        .project-oem {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .project-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 1rem;
+        }
+
+        .project-tags span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        /* ── INTERESTS ── */
+        #interests { padding-top: 8rem; }
+
+        .interest-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .pill {
+            padding: 0.7rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        /* ── CONTACT ── */
+        #contact {
+            padding-top: 8rem;
+            padding-bottom: 6rem;
+        }
+
+        .contact-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, var(--accent-dim), transparent 60%);
+            pointer-events: none;
+        }
+
+        .contact-box h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .contact-box p {
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .contact-link:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            nav { padding: 1rem; }
+            .nav-links { gap: 1rem; }
+            .nav-links a { font-size: 0.7rem; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            .about-grid { grid-template-columns: 1fr; }
+            .expertise-grid { grid-template-columns: 1fr; }
+            .project-grid { grid-template-columns: 1fr; }
+            .contact-box { padding: 2rem 1.5rem; }
+            .contact-links { flex-direction: column; align-items: center; }
+            .hero-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">KD_</div>
+    <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#expertise">Expertise</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">
+        <span class="dot"></span>
+        Open to Opportunities
+    </div>
+    <h1>BIW Robotic<br><span class="highlight">Simulation Engineer</span></h1>
+    <p class="hero-sub">
+        8.5+ years driving automotive manufacturing innovation through robotic simulation, process planning, and digital twin technologies for global OEMs.
+    </p>
+    <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Get In Touch ↗</a>
+        <a href="#projects" class="btn-outline">View Projects</a>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-num">8.5+</div>
+            <div class="stat-label">Years Experience</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">6+</div>
+            <div class="stat-label">Global OEMs</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">5+</div>
+            <div class="stat-label">Simulation Tools</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">3</div>
+            <div class="stat-label">Programming Languages</div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+    <div class="section-tag reveal">// About</div>
+    <h2 class="section-title reveal">Engineering the<br>Future of Manufacturing</h2>
+    <div class="about-grid">
+        <div class="about-text reveal">
+            <p>
+                I specialize in Body-in-White (BIW) robotic simulation for the automotive industry — from process planning and plant engineering to offline programming and virtual commissioning of welding and assembly lines.
+            </p>
+            <p>
+                My work spans global OEMs including Mercedes-Benz, BMW, Daimler, Volkswagen, SCANIA, and CEER, where I've optimized cycle times, validated robot reach, and ensured collision-free production cells — all before a single robot hits the shop floor.
+            </p>
+            <p>
+                Currently based in Gurugram, India, I'm passionate about leveraging digital twin technologies and automation to push the boundaries of what's possible in modern manufacturing.
+            </p>
+        </div>
+        <div class="reveal">
+            <div class="tech-stack">
+                <span class="tech-tag">DELMIA V5</span>
+                <span class="tech-tag">Process Simulate</span>
+                <span class="tech-tag">ABB RobotStudio</span>
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">C++</span>
+                <span class="tech-tag">MATLAB</span>
+                <span class="tech-tag">OPC UA</span>
+                <span class="tech-tag">TIA Portal</span>
+                <span class="tech-tag">Factory I/O</span>
+                <span class="tech-tag">PLC Programming</span>
+                <span class="tech-tag">Virtual Commissioning</span>
+                <span class="tech-tag">Offline Programming</span>
+                <span class="tech-tag">3D Printing</span>
+                <span class="tech-tag">AR/VR</span>
+                <span class="tech-tag">LaTeX</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- EXPERTISE -->
+<section id="expertise">
+    <div class="section-tag reveal">// Expertise</div>
+    <h2 class="section-title reveal">Core Competencies</h2>
+    <div class="expertise-grid">
+        <div class="exp-card reveal">
+            <div class="exp-icon">🤖</div>
+            <h3>Robotic Simulation</h3>
+            <p>Offline programming, reach analysis, collision detection, and cycle time optimization for multi-robot welding and assembly cells.</p>
+        </div>
+        <div class="exp-card reveal">
+            <div class="exp-icon">🏭</div>
+            <h3>Process Planning</h3>
+            <p>End-to-end BIW process planning including station allocation, tooling design validation, and production sequencing for automotive body shops.</p>
+        </div>
+        <div class="exp-card reveal">
+            <div class="exp-icon">⚡</div>
+            <h3>EV Battery Assembly</h3>
+            <p>Simulation and process engineering for electric vehicle battery module and pack assembly lines — the next frontier of automotive.</p>
+        </div>
+        <div class="exp-card reveal">
+            <div class="exp-icon">🔗</div>
+            <h3>Digital Twin</h3>
+            <p>Building virtual replicas of production environments for real-time monitoring, predictive maintenance, and continuous optimization.</p>
+        </div>
+        <div class="exp-card reveal">
+            <div class="exp-icon">🎯</div>
+            <h3>Virtual Commissioning</h3>
+            <p>PLC validation and signal mapping in virtual environments, reducing on-site commissioning time and risk significantly.</p>
+        </div>
+        <div class="exp-card reveal">
+            <div class="exp-icon">📐</div>
+            <h3>Plant Engineering</h3>
+            <p>Layout optimization, material flow analysis, and ergonomic assessment for welding lines and assembly stations at scale.</p>
+        </div>
+    </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+    <div class="section-tag reveal">// Experience</div>
+    <h2 class="section-title reveal">Career Timeline</h2>
+    <div class="timeline">
+        <div class="timeline-item reveal">
+            <div class="timeline-date">PRESENT</div>
+            <h3>BIW Robotic Simulation Engineer</h3>
+            <div class="timeline-company">Global Automotive OEMs — Gurugram, India</div>
+            <p>Leading robotic simulation for BIW welding and assembly lines, working with DELMIA V5, Process Simulate, and ABB RobotStudio. Focused on EV battery assembly processes and digital twin implementation.</p>
+        </div>
+        <div class="timeline-item reveal">
+            <div class="timeline-date">KEY PROJECTS</div>
+            <h3>Process Planning & Plant Engineering</h3>
+            <div class="timeline-company">Mercedes-Benz · BMW · Daimler · VW · SCANIA · CEER</div>
+            <p>Delivered process planning solutions for major European and global OEMs, spanning welding line simulation, cycle time optimization, and production cell validation across multiple vehicle programs.</p>
+        </div>
+        <div class="timeline-item reveal">
+            <div class="timeline-date">CONTINUOUS</div>
+            <h3>Technical Exploration & Content Creation</h3>
+            <div class="timeline-company">Personal Development</div>
+            <p>Developing educational content around PLC programming, industrial automation, and robotics simulation. Exploring headless simulation tools, API development, and advanced manufacturing protocols.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+    <div class="section-tag reveal">// Projects</div>
+    <h2 class="section-title reveal">Selected Work</h2>
+    <div class="project-grid">
+        <div class="project-card reveal">
+            <div class="project-oem">Mercedes-Benz / BMW / Daimler</div>
+            <h3>BIW Welding Line Simulation</h3>
+            <p>Complete robotic simulation for multi-station welding lines including OLP, reach studies, collision analysis, and cycle time optimization for body-in-white production.</p>
+            <div class="project-tags">
+                <span>DELMIA V5</span>
+                <span>OLP</span>
+                <span>Spot Welding</span>
+                <span>Cycle Time</span>
+            </div>
+        </div>
+        <div class="project-card reveal">
+            <div class="project-oem">Electric Vehicle Programs</div>
+            <h3>EV Battery Assembly Simulation</h3>
+            <p>Process planning and simulation for electric vehicle battery module and pack assembly lines, including adhesive dispensing, fastening, and quality inspection stations.</p>
+            <div class="project-tags">
+                <span>Process Simulate</span>
+                <span>EV Battery</span>
+                <span>Assembly</span>
+            </div>
+        </div>
+        <div class="project-card reveal">
+            <div class="project-oem">Industrial Automation</div>
+            <h3>PLC & Factory I/O Tutorials</h3>
+            <p>Comprehensive educational series covering TIA Portal programming with Factory I/O simulation — from digital I/O basics to advanced Function Blocks and Data Blocks.</p>
+            <div class="project-tags">
+                <span>TIA Portal</span>
+                <span>Factory I/O</span>
+                <span>PLC</span>
+                <span>Education</span>
+            </div>
+        </div>
+        <div class="project-card reveal">
+            <div class="project-oem">Research & Development</div>
+            <h3>Headless Simulation & API Dev</h3>
+            <p>Exploring batch processing capabilities of Tecnomatix Process Simulate and developing API interfaces using OPC UA protocols for manufacturing environments.</p>
+            <div class="project-tags">
+                <span>OPC UA</span>
+                <span>Python</span>
+                <span>API</span>
+                <span>Automation</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INTERESTS -->
+<section id="interests">
+    <div class="section-tag reveal">// Interests</div>
+    <h2 class="section-title reveal">What Drives Me</h2>
+    <div class="interest-pills">
+        <span class="pill reveal">Industrial Robotics</span>
+        <span class="pill reveal">Warehouse Automation</span>
+        <span class="pill reveal">Virtual Commissioning</span>
+        <span class="pill reveal">3D Printing</span>
+        <span class="pill reveal">AR / VR</span>
+        <span class="pill reveal">Digital Twin</span>
+        <span class="pill reveal">EV Manufacturing</span>
+        <span class="pill reveal">Offline Programming</span>
+        <span class="pill reveal">Project Management</span>
+        <span class="pill reveal">Universal Robots</span>
+        <span class="pill reveal">Industry 4.0</span>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+    <div class="contact-box reveal">
+        <h2>Let's Build Something</h2>
+        <p>Looking for a simulation engineer who bridges the gap between virtual and physical manufacturing? Let's connect.</p>
+        <div class="contact-links">
+            <a href="mailto:your.email@example.com" class="contact-link">✉ Email</a>
+            <a href="https://linkedin.com/in/your-profile" class="contact-link" target="_blank">⟐ LinkedIn</a>
+            <a href="https://github.com/your-username" class="contact-link" target="_blank">◈ GitHub</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © 2026 KD — Built with precision
+</footer>
+
+<script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Smooth nav highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const top = section.offsetTop - 100;
+            if (window.scrollY >= top) {
+                current = section.getAttribute('id');
+            }
+        });
+        navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + current
+                ? 'var(--accent)' : '';
+        });
+    });
+</script>
+
+</body>
+</html>
